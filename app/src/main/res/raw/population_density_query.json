@@ -1,0 +1,35 @@
+{
+  "query": [
+    {
+      "code": "Alue",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "KU020"
+        ]
+      }
+    },
+    {
+      "code": "Tiedot",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "maa_pa",
+          "vaesto_maa_pa"
+        ]
+      }
+    },
+    {
+      "code": "Vuosi",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2022"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}

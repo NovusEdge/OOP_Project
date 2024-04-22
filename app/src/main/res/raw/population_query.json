@@ -1,0 +1,37 @@
+{
+  "query": [
+    {
+      "code": "Vuosi",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2022"
+        ]
+      }
+    },
+    {
+      "code": "Alue",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "KU020"
+        ]
+      }
+    },
+    {
+      "code": "Tiedot",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "vm01",
+          "vm11",
+          "kokmuutos",
+          "vaesto"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "format": "json-stat2"
+  }
+}
