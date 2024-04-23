@@ -41,10 +41,10 @@ public class PopulationDataFragment extends Fragment {
 
         population.setText(String.format("Population: %d", populationData.getPopulationCount()));
         populationDensity.setText(String.format("Population Density: %f persons per sq. m", populationData.getPopulationDensity()));
-        changeRate.setText(String.format("Change Rate: %f", populationData.getChangeRate()));
-        employmentRate.setText(String.format("Employment Rate: %f", populationData.getEmployementRate()));
+        changeRate.setText(String.format("Change Rate: %f%%", populationData.getChangeRate()));
+        employmentRate.setText(String.format("Employment Rate: %f%%", populationData.getEmployementRate()));
         citySize.setText(String.format("City Size: %f sq. km", populationData.getCitySize()));
-        workplaceETextView.setText(String.format("Workplace Efficiency: %f", populationData.getWorkplaceEfficiency()));
+        workplaceETextView.setText(String.format("Workplace Efficiency: %f%%", populationData.getWorkplaceEfficiency()));
 
         return view;
     }

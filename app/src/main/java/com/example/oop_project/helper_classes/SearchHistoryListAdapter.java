@@ -14,8 +14,10 @@ import com.example.oop_project.R;
 
 /// Adapter for the RecyclerView in SearchHistoryView
 public class SearchHistoryListAdapter extends RecyclerView.Adapter<SearchHistoryViewHolder> {
+    /// Context of the activity
     Context context;
 
+    /// Constructor
     public SearchHistoryListAdapter(Context context) {
         this.context = context;
     }
@@ -35,6 +37,7 @@ public class SearchHistoryListAdapter extends RecyclerView.Adapter<SearchHistory
         });
     }
 
+    /// Get the number of cities in the list
     @Override
     public int getItemCount() {
         return cityList.size();

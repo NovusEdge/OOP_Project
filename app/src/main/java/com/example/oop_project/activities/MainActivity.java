@@ -30,11 +30,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+
+    /// The file that the city search history is stored in
     public static String CITY_HISTORY_FILE = "city_history.data";
+
+    /// The list of cities that the user has searched for
     public static ArrayList<String> cityList = new ArrayList<>();
 
+
+    /// The current city that the user is viewing
     public static String currentCity;
 
+    /// A hashmap of valid city names and their corresponding codes
     public HashMap<String, String> validCities = new HashMap<>();
 
     @Override
@@ -51,16 +58,16 @@ public class MainActivity extends AppCompatActivity {
         /// Get UI components:
         Button searchButton = findViewById(R.id.searchButton);
         TextView citySearch = findViewById(R.id.citySearchTextView);
+        Context context = getApplicationContext();
         RecyclerView cityHistoryRecyclerView = findViewById(R.id.cityRecyclerView);
+        cityHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         /// Read city search history from file into an arraylist of strings.
         /// Each of the names are separated by a newline character.
-        Context context = getApplicationContext();
-        cityHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-
         readFromCityFile(context);
-        SearchHistoryListAdapter cityViewAdapter = new SearchHistoryListAdapter(context);
-        cityHistoryRecyclerView.setAdapter(cityViewAdapter);
+
+        /// Set up the recycler view for the city search history
+        cityHistoryRecyclerView.setAdapter(new SearchHistoryListAdapter(context));
 
         /// Fetch city codes from the API
         ExecutorService service = Executors.newSingleThreadExecutor();
@@ -70,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         });
 
         /// Set up the search button to add the city to the list of cities and start the CityView activity. 
@@ -79,13 +85,14 @@ public class MainActivity extends AppCompatActivity {
             String city = citySearch.getText().toString();
             if (validCities.containsKey(city)) {
                 cityList.add(city);
-                writeToCityFile(context);
                 currentCity = city;
 
+                writeToCityFile(context);
                 /// Start the CityView activity
                 Intent intent = new Intent(MainActivity.this, CityInformationActivity.class);
                 startActivity(intent);
             } else {
+                /// Show an alert dialog if the city is invalid
                 new AlertDialog.Builder(this)
                         .setTitle("Invalid City")
                         .setMessage("Please enter a valid city name.")
@@ -109,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
     /// Read the city list from the file CITY_HISTORY_FILE
     private void readFromCityFile(Context context) {
         try {
+
+            /// Read the city list from the file
             ObjectInputStream userReader = new ObjectInputStream(context.openFileInput(CITY_HISTORY_FILE));
             cityList = (ArrayList<String>) userReader.readObject();
             userReader.close();

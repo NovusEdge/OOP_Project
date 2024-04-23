@@ -12,9 +12,11 @@ import com.example.oop_project.fragments.WeatherDataFragment;
 
 /// Adapter for the ViewPager2 in CityInformationActivity
 public class CityTabPagerAdapter extends FragmentStateAdapter {
+    /// Population and weather data
     PopulationData populationData;
     WeatherData weatherData;
 
+    /// Constructor for the adapter
     public CityTabPagerAdapter(@NonNull FragmentActivity fragmentActivity, PopulationData populationData, WeatherData weatherData) {
         super(fragmentActivity);
         this.populationData = populationData;

@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CityInformationActivity extends AppCompatActivity {
+    /// The data for the current city that the user is viewing
     public static MunicipalityData currentMunicipalityData;
 
     @Override
@@ -37,7 +38,7 @@ public class CityInformationActivity extends AppCompatActivity {
             return insets;
         });
 
-        /// Fetch data
+        /// Fetch data for the current city
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
             DataRetriever dataRetriever = new DataRetriever(getApplicationContext());
@@ -53,11 +54,12 @@ public class CityInformationActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
 
-            /// Update UI
+            /// Update UI with the fetched data
             runOnUiThread(() -> {
                 ViewPager2 cityViewPager = (ViewPager2) findViewById(R.id.viewArea);
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
 
+                /// Set up the ViewPager and TabLayout
                 CityTabPagerAdapter adapter = new CityTabPagerAdapter(this, currentMunicipalityData.populationData, currentMunicipalityData.weatherData);
                 cityViewPager.setAdapter(adapter);
 

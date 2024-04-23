@@ -76,10 +76,9 @@ public class WeatherDataFragment extends Fragment {
 
 
         main.setText(String.format("%s: %s %s", currentCity, weatherData.getMain(), weatherEmoji));
-
-        tempRange.setText(String.format("Temperature range: %f to %f", weatherData.getTempRange()[0], weatherData.getTempRange()[1]));
+        tempRange.setText(String.format("Temperature range: %f C to %f C", weatherData.getTempRange()[0], weatherData.getTempRange()[1]));
         humidity.setText(String.format("Humidity: %f", weatherData.getHumidity()));
-        meanTempDaily.setText(String.format("Mean daily temperature: %f", weatherData.getMeanDailyTemp()));
+        meanTempDaily.setText(String.format("Mean daily temperature: %f C", weatherData.getMeanDailyTemp()));
         uviTextView.setText(String.format("UV Index: %f", weatherData.getUvIndex()));
 
         return view;
