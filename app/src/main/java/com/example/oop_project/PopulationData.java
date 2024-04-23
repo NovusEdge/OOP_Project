@@ -1,5 +1,6 @@
 package com.example.oop_project;
 
+/// Data class to store the population data for a city
 public class PopulationData {
     private final float workplaceEfficiency;
     private int populationCount;
@@ -16,6 +17,10 @@ public class PopulationData {
         this.citySize = citySize;
         this.workplaceEfficiency = workplaceEfficiency;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////// Getters and Setters /////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     public float getChangeRate() {
         return changeRate;

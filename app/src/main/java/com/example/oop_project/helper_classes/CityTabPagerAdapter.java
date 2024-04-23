@@ -10,6 +10,7 @@ import com.example.oop_project.WeatherData;
 import com.example.oop_project.fragments.PopulationDataFragment;
 import com.example.oop_project.fragments.WeatherDataFragment;
 
+/// Adapter for the ViewPager2 in CityInformationActivity
 public class CityTabPagerAdapter extends FragmentStateAdapter {
     PopulationData populationData;
     WeatherData weatherData;
@@ -20,6 +21,9 @@ public class CityTabPagerAdapter extends FragmentStateAdapter {
         this.weatherData = weatherData;
     }
 
+    /// Create the fragment based on the position in the ViewPager2
+    /// 0 -> PopulationDataFragment
+    /// 1 -> WeatherDataFragment
     @NonNull
     @Override
     public Fragment createFragment(int position) {

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.example.oop_project.PopulationData;
 import com.example.oop_project.R;
 
-
+/// Fragment for displaying population data in CityInformationActivity
 public class PopulationDataFragment extends Fragment {
     PopulationData populationData;
     public PopulationDataFragment(PopulationData populationData) {
@@ -29,7 +29,9 @@ public class PopulationDataFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_population_data, container, false);
+        
 
+        /// Get UI components and set the text to the population data
         TextView population         = (TextView) view.findViewById(R.id.populationCountTextView);
         TextView populationDensity  = (TextView) view.findViewById(R.id.popoulationDensityTextView);
         TextView changeRate         = (TextView) view.findViewById(R.id.changeRateTextView);

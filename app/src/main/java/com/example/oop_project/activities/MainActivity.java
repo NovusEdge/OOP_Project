@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Get UI components:
+        /// Get UI components:
         Button searchButton = findViewById(R.id.searchButton);
         TextView citySearch = findViewById(R.id.citySearchTextView);
         RecyclerView cityHistoryRecyclerView = findViewById(R.id.cityRecyclerView);
 
-        // Read city search history from file into an arraylist of strings.
-        // Each of the names are separated by a newline character.
+        /// Read city search history from file into an arraylist of strings.
+        /// Each of the names are separated by a newline character.
         Context context = getApplicationContext();
         cityHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         SearchHistoryListAdapter cityViewAdapter = new SearchHistoryListAdapter(context);
         cityHistoryRecyclerView.setAdapter(cityViewAdapter);
 
+        /// Fetch city codes from the API
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
             try {
@@ -72,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        // Set the onClickListener for the search button.
+        /// Set up the search button to add the city to the list of cities and start the CityView activity. 
+        /// If the city is invalid, show an alert dialog.
         searchButton.setOnClickListener(v -> {
             String city = citySearch.getText().toString();
             if (validCities.containsKey(city)) {
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 writeToCityFile(context);
                 currentCity = city;
 
-                // Start the CityView activity.
+                /// Start the CityView activity
                 Intent intent = new Intent(MainActivity.this, CityInformationActivity.class);
                 startActivity(intent);
             } else {
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /// Write the city list to the file CITY_HISTORY_FILE
     private void writeToCityFile(Context context) {
         try {
             ObjectOutputStream userWriter = new ObjectOutputStream(context.openFileOutput(CITY_HISTORY_FILE, Context.MODE_APPEND));
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /// Read the city list from the file CITY_HISTORY_FILE
     private void readFromCityFile(Context context) {
         try {
             ObjectInputStream userReader = new ObjectInputStream(context.openFileInput(CITY_HISTORY_FILE));

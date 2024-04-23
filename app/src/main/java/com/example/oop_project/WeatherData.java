@@ -1,11 +1,13 @@
 package com.example.oop_project;
 
+/// Data class to store the weather data for a city
 public class WeatherData {
     private String main, description;
     private double[] tempRange;
     private float meanDailyTemp;
     private float uvIndex;
     private float humidity;
+
     public WeatherData(String main, String description, double[] tempRange, float meanDailyTemp, float uvIndex, float humidity) {
         this.main = main;
         this.description = description;
@@ -15,6 +17,9 @@ public class WeatherData {
         this.humidity = humidity;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////// Getters and Setters /////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     public String getMain() {
         return main;

@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.oop_project.R;
 import com.example.oop_project.WeatherData;
 
-
+/// Fragment for displaying weather data in CityInformationActivity
 public class WeatherDataFragment extends Fragment {
     WeatherData weatherData;
 
@@ -34,6 +34,7 @@ public class WeatherDataFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_weather_data, container, false);
 
+        /// Get UI components and set the text to the weather data.
         TextView main           = (TextView) view.findViewById(R.id.maindescTextView);
         TextView tempRange      = (TextView) view.findViewById(R.id.tempRangeTextView);
         TextView humidity       = (TextView) view.findViewById(R.id.humidityTextView);
@@ -41,7 +42,7 @@ public class WeatherDataFragment extends Fragment {
         TextView uviTextView    = (TextView) view.findViewById(R.id.uviTextView);
 
         String weatherEmoji = "";
-
+                                
         switch (weatherData.getMain().toLowerCase()) {
             case "clear":
                 weatherEmoji = "☀️";

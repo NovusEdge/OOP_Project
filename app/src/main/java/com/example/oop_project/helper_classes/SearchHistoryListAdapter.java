@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oop_project.R;
 
+/// Adapter for the RecyclerView in SearchHistoryView
 public class SearchHistoryListAdapter extends RecyclerView.Adapter<SearchHistoryViewHolder> {
     Context context;
 
@@ -25,6 +26,7 @@ public class SearchHistoryListAdapter extends RecyclerView.Adapter<SearchHistory
         return new SearchHistoryViewHolder(LayoutInflater.from(context).inflate(R.layout.activity_city_view, parent, false));
     }
 
+    /// Bind the city name to the TextView and set the onClickListener to set the currentCity to the selected city.
     @Override
     public void onBindViewHolder(@NonNull SearchHistoryViewHolder holder, int position) {
         holder.cityNameTextView.setText(cityList.get(position));

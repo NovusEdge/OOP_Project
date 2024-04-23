@@ -37,6 +37,7 @@ public class CityInformationActivity extends AppCompatActivity {
             return insets;
         });
 
+        /// Fetch data
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
             DataRetriever dataRetriever = new DataRetriever(getApplicationContext());
@@ -52,6 +53,7 @@ public class CityInformationActivity extends AppCompatActivity {
                 throw new RuntimeException(e);
             }
 
+            /// Update UI
             runOnUiThread(() -> {
                 ViewPager2 cityViewPager = (ViewPager2) findViewById(R.id.viewArea);
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);

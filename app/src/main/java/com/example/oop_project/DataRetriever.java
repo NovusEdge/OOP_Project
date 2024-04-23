@@ -21,23 +21,30 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class DataRetriever {
-    // !!!!NOTE!!!!
-    // NEVER DO THIS IN PRODUCTION CODE. I'M ONLY DOING THIS FOR THE PROJECT BECAUSE I'M NOT ALLOWED TO USE ANYTHING ELSE.
-    // ONCE AGAIN THIS IS A SECURITY RISK AND SHOULD NEVER BE DONE IN PRODUCTION CODE.
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    /// NEVER DO THIS IN PRODUCTION CODE. I'M ONLY DOING THIS FOR THE PROJECT 
+    /// BECAUSE I'M NOT ALLOWED TO USE ANYTHING ELSE. THIS IS A SECURITY RISK 
+    /// AND SHOULD NEVER BE DONE IN PRODUCTION CODE.
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private final String WEATHER_API_KEY = "6f519c9d7fbe803f6e7101ed34bb2603";
+
+    /// API URLs for fetching data
     private final String WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&exclude=hourly,minutely&appid=%s";
     private final String GEOLOCATION_API_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&appid=%s";
     private final String POPULATION_STATS_API_URL = "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px";
     private final String UVI_API_URL = "https://currentuvindex.com/api/v1/uvi?latitude=%s&longitude=%s";
 
+    /// Jackson object mapper for parsing JSON
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    Context context;
+    /// Android context for reading resources
+    Context context; 
 
     public DataRetriever(Context context) {
         this.context = context;
     }
 
+    /// Fetches the population and weather data for a given municipality
     public MunicipalityData GetMunicipalityData(String municipalityName) throws IOException {
         PopulationData populationData = getPopulationData(municipalityName);
         Log.i("DataRetriever", "Population data retrieved");
@@ -46,6 +53,7 @@ public class DataRetriever {
         return new MunicipalityData(populationData, weatherData);
     }
 
+    /// Fetches the city codes for all municipalities in Finland, and maps them to their respective names into a hashmap
     public HashMap<String, String> GetCityCodes() throws IOException {
         JsonNode codes = null;
         JsonNode names = null;
@@ -75,6 +83,7 @@ public class DataRetriever {
         return nameToCodes;
     }
 
+    /// Fetches the weather data for a given municipality using the OpenWeatherMap and CurrentUVIndex APIs
     private WeatherData getWeatherData(String municipalityName) throws IOException {
         URL locationUrl = new URL(String.format(GEOLOCATION_API_URL, municipalityName, WEATHER_API_KEY));
         JsonNode locationJson = getData(locationUrl);
@@ -104,6 +113,7 @@ public class DataRetriever {
         return new WeatherData(main, description, tempRange, meanDailyTemp, uvIndex, humidity);
     }
 
+    /// Fetches the population data for a given municipality using the PXData API from Statistics Finland
     private PopulationData getPopulationData(String municipalityName) throws IOException {
         String code = GetCityCodes().get(municipalityName);
 
@@ -136,6 +146,7 @@ public class DataRetriever {
         return new PopulationData(population, populationChangeRate, employmentRate, populationDensity, citySize, workplaceEfficiency);
     }
 
+    /// Fetches data from a given URL. This is a method overload for fetching data with a GET request
     private static JsonNode getData(URL locationUrl){
         try {
             return objectMapper.readTree(locationUrl);
@@ -148,6 +159,8 @@ public class DataRetriever {
         }
     }
 
+    /// Fetches data from a given URL. This is a method overload for fetching data with a POST request
+    /// The query for fetching data from a single municipality is stored in query.json
     private static JsonNode getData(URL sourceURL, InputStream query, String code){
         try {
             // The query for fetching data from a single municipality is stored in query.json
@@ -176,6 +189,7 @@ public class DataRetriever {
     }
 
 
+    /// Connects to an API and sends a POST request
     private static HttpURLConnection connectToAPIAndSendPostRequest(ObjectMapper objectMapper, JsonNode jsonQuery, URL url)
             throws MalformedURLException, IOException, ProtocolException, JsonProcessingException {
 
