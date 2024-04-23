@@ -8,76 +8,98 @@
 
     <TextView
         android:id="@+id/populationCountTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_width="296dp"
+        android:layout_height="65dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/changeRateTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/changeRateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/popoulationDensityTextView"
+        android:layout_width="297dp"
+        android:layout_height="60dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/employmentRateTextView"
+        app:layout_constraintBottom_toTopOf="@+id/citySizeTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/populationCountTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/employmentRateTextView" />
+
+    <TextView
+        android:id="@+id/citySizeTextView"
+        android:layout_width="297dp"
+        android:layout_height="55dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/workplaceETextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popoulationDensityTextView" />
 
     <TextView
         android:id="@+id/workplaceETextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="180dp"
+        android:layout_width="299dp"
+        android:layout_height="59dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/citySizeTextView" />
 
     <TextView
         android:id="@+id/employmentRateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="296dp"
+        android:layout_height="54dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/popoulationDensityTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeRateTextView" />
 
     <TextView
-        android:id="@+id/citySizeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/changeRateTextView"
+        android:layout_width="294dp"
+        android:layout_height="55dp"
+        android:background="#AC0216"
+        android:backgroundTint="#3C3C3C"
+        android:backgroundTintMode="add"
         android:text="TextView"
+        android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/workplaceETextView"
+        app:layout_constraintBottom_toTopOf="@+id/employmentRateTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popoulationDensityTextView" />
-
-    <TextView
-        android:id="@+id/popoulationDensityTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/citySizeTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/employmentRateTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/populationCountTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

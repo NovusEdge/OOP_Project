@@ -5,15 +5,13 @@ public class WeatherData {
     private double[] tempRange;
     private float meanDailyTemp;
     private float uvIndex;
-    private float precipitation;
     private float humidity;
-    public WeatherData(String main, String description, double[] tempRange, float meanDailyTemp, float uvIndex, float precipitation, float humidity) {
+    public WeatherData(String main, String description, double[] tempRange, float meanDailyTemp, float uvIndex, float humidity) {
         this.main = main;
         this.description = description;
         this.tempRange = tempRange;
         this.meanDailyTemp = meanDailyTemp;
         this.uvIndex = uvIndex;
-        this.precipitation = precipitation;
         this.humidity = humidity;
     }
 
@@ -56,14 +54,6 @@ public class WeatherData {
 
     public void setUvIndex(float uvIndex) {
         this.uvIndex = uvIndex;
-    }
-
-    public float getPrecipitation() {
-        return precipitation;
-    }
-
-    public void setPrecipitation(float precipitation) {
-        this.precipitation = precipitation;
     }
 
     public float getHumidity() {

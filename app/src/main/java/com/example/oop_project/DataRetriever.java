@@ -3,15 +3,19 @@ package com.example.oop_project;
 import android.content.Context;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
@@ -21,11 +25,12 @@ public class DataRetriever {
     // NEVER DO THIS IN PRODUCTION CODE. I'M ONLY DOING THIS FOR THE PROJECT BECAUSE I'M NOT ALLOWED TO USE ANYTHING ELSE.
     // ONCE AGAIN THIS IS A SECURITY RISK AND SHOULD NEVER BE DONE IN PRODUCTION CODE.
     private final String WEATHER_API_KEY = "6f519c9d7fbe803f6e7101ed34bb2603";
-    private final String WEATHER_API_URL = "https://api.openweathermap.org/data/3.0/onecall?lat=%s&lon=%s&exclude=hourly,minutely&appid=%s";
+    private final String WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&exclude=hourly,minutely&appid=%s";
     private final String GEOLOCATION_API_URL = "http://api.openweathermap.org/geo/1.0/direct?q=%s&appid=%s";
     private final String POPULATION_STATS_API_URL = "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/synt/statfin_synt_pxt_12dy.px";
+    private final String UVI_API_URL = "https://currentuvindex.com/api/v1/uvi?latitude=%s&longitude=%s";
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     Context context;
 
@@ -45,10 +50,11 @@ public class DataRetriever {
         JsonNode codes = null;
         JsonNode names = null;
 
-        JsonNode areas = getData(new URL(POPULATION_STATS_API_URL), objectMapper, null, "GET", null);
+        JsonNode areas = getData(new URL(POPULATION_STATS_API_URL));
 
         Log.i("CityCodes", "City codes retrieved");
 
+        assert areas != null;
         for (JsonNode node : areas.findValue("variables")) {
             if (node.findValue("text").asText().equals("Area")) {
                 codes = node.findValue("values");
@@ -70,65 +76,59 @@ public class DataRetriever {
     }
 
     private WeatherData getWeatherData(String municipalityName) throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
         URL locationUrl = new URL(String.format(GEOLOCATION_API_URL, municipalityName, WEATHER_API_KEY));
-        JsonNode locationJson = getData(locationUrl, objectMapper, null, "GET", null);
+        JsonNode locationJson = getData(locationUrl);
         String latitude = locationJson.get(0).get("lat").toString();
         String longitude = locationJson.get(0).get("lon").toString();
 
         URL weatherUrl = new URL(String.format(WEATHER_API_URL, latitude, longitude, WEATHER_API_KEY));
-        JsonNode weatherJson = getData(weatherUrl, objectMapper, null, "GET", null);
+        JsonNode weatherJson = getData(weatherUrl);
 
-        String main = weatherJson.get("current").get("weather").get(0).get("main").asText();
-        String description = weatherJson.get("current").get("weather").get(0).get("description").asText();
+        String main = weatherJson.get("weather").get(0).get("main").asText();
+        String description = weatherJson.get("weather").get(0).get("description").asText();
 
         double[] tempRange = new double[2];
-        tempRange[0] = weatherJson.get("daily").get("temp").get("min").asDouble();
-        tempRange[1] = weatherJson.get("daily").get("temp").get("max").asDouble();
+        tempRange[0] = weatherJson.get("main").get("temp_min").asDouble() - 273.15;
+        tempRange[1] = weatherJson.get("main").get("temp_max").asDouble() - 273.15;
 
         float meanDailyTemp = (float) (tempRange[0] + tempRange[1]) / 2;
-        float humidity = weatherJson.get("current").get("humidity").floatValue();
+        float humidity = weatherJson.get("main").get("humidity").floatValue();
 
-        float uvIndex = weatherJson.get("daily").get("uvi").floatValue();
-        float precipitation = weatherJson.get("daily").has("rain") ? weatherJson.get("daily").get("rain").floatValue() : 0;
+
+        URL uviUrl = new URL(String.format(UVI_API_URL, latitude, longitude));
+        JsonNode uviJson = getData(uviUrl);
+        float uvIndex = uviJson.get("now").get("uvi").floatValue();
 
         Log.i("WeatherData", "Weather data retrieved");
 
-        return new WeatherData(main, description, tempRange, meanDailyTemp, uvIndex, precipitation, humidity);
+        return new WeatherData(main, description, tempRange, meanDailyTemp, uvIndex, humidity);
     }
 
     private PopulationData getPopulationData(String municipalityName) throws IOException {
         String code = GetCityCodes().get(municipalityName);
 
-        JsonNode jsonQuery = objectMapper.readTree(context.getResources().openRawResource(R.raw.population_query));
-        JsonNode populationData = getData(new URL(POPULATION_STATS_API_URL), objectMapper, jsonQuery, "POST", code);
+        JsonNode populationData = getData(new URL(POPULATION_STATS_API_URL), context.getResources().openRawResource(R.raw.population_query), code);
         int totalChange = populationData.get("value").get(2).asInt();
         int population = populationData.get("value").get(3).asInt();
         float populationChangeRate = (float) totalChange / population * 100;
 
-        Log.i("PopulationData", "Population data retrieved");
+        Log.i("Population", "Population number retrieved");
 
-        jsonQuery = objectMapper.readTree(context.getResources().openRawResource(R.raw.employment_query));
         String EMPLOYMENT_STATS_API_URL = "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/tyokay/statfin_tyokay_pxt_115x.px";
-        JsonNode employmentData = getData(new URL(EMPLOYMENT_STATS_API_URL), objectMapper, jsonQuery, "POST", code);
+        JsonNode employmentData = getData(new URL(EMPLOYMENT_STATS_API_URL), context.getResources().openRawResource(R.raw.employment_query), code);
         float employmentRate = employmentData.get("value").get(0).floatValue();
 
         Log.i("EmploymentData", "Employment data retrieved");
 
-        jsonQuery = objectMapper.readTree(context.getResources().openRawResource(R.raw.population_density_query));
         String POPULATION_DENSITY_STATS_API_URL = "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/vaerak/statfin_vaerak_pxt_11ra.px";
-        JsonNode populationDensityData = getData(new URL(POPULATION_DENSITY_STATS_API_URL), objectMapper, jsonQuery, "POST", code);
+        JsonNode populationDensityData = getData(new URL(POPULATION_DENSITY_STATS_API_URL), context.getResources().openRawResource(R.raw.population_density_query), code);
         float citySize = populationDensityData.get("value").get(1).floatValue();
         float populationDensity = populationDensityData.get("value").get(0).floatValue();
 
-
         Log.i("PopulationDensityData", "Population density data retrieved");
 
-        jsonQuery = objectMapper.readTree(context.getResources().openRawResource(R.raw.workplace_efficiency_query));
         String WORKPLACE_EFFICIENCY_STATS_API_URL = "https://pxdata.stat.fi:443/PxWeb/api/v1/en/StatFin/tyokay/statfin_tyokay_pxt_125s.px";
-        JsonNode workplaceEfficiencyData = getData(new URL(WORKPLACE_EFFICIENCY_STATS_API_URL), objectMapper, jsonQuery, "POST", code);
+        JsonNode workplaceEfficiencyData = getData(new URL(WORKPLACE_EFFICIENCY_STATS_API_URL), context.getResources().openRawResource(R.raw.workplace_efficiency_query), code);
         float workplaceEfficiency = workplaceEfficiencyData.get("value").get(0).floatValue();
 
         Log.i("WorkplaceEfficiencyData", "Workplace efficiency data retrieved");
@@ -136,58 +136,60 @@ public class DataRetriever {
         return new PopulationData(population, populationChangeRate, employmentRate, populationDensity, citySize, workplaceEfficiency);
     }
 
-    private JsonNode getData(URL url, ObjectMapper objectMapper, JsonNode jsonQuery, String queryType, String cityCode) throws IOException {
-        HttpURLConnection con;
+    private static JsonNode getData(URL locationUrl){
+        try {
+            return objectMapper.readTree(locationUrl);
+        } catch(MalformedURLException e){
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-        if (queryType.equals("GET")) {
-            // con = connectToAPIAndSendGetRequest(url);
-            return objectMapper.readTree(url);
-        } else if (queryType.equals("POST")) {
-            ((ObjectNode) jsonQuery.findValue("query").get(0).get("selection")).putArray("values").removeAll();
-            ((ObjectNode) jsonQuery.findValue("query").get(0).get("selection")).putArray("values").add(cityCode);
-            con = connectToAPIAndSendPostRequest(url, objectMapper, jsonQuery);
+    private static JsonNode getData(URL sourceURL, InputStream query, String code){
+        try {
+            // The query for fetching data from a single municipality is stored in query.json
+            JsonNode jsonQuery = objectMapper.readTree(query);
+            // Let's replace the municipality code in the query with the municipality that the user gave
+            // as input
+            ((ObjectNode)jsonQuery.findValue("query").get(0).get("selection")).putArray("values").add(code);
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
+            HttpURLConnection con = connectToAPIAndSendPostRequest(objectMapper, jsonQuery, sourceURL);
+
+            try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
                 StringBuilder response = new StringBuilder();
-                String responseLine;
+                String responseLine = null;
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
 
-                return objectMapper.readTree(response.toString());
-            } catch (IOException e) {
-                Log.e("DATA_FETCH", "Error reading response", e);
-                throw new IOException("Error reading response", e);
-            } finally {
-                con.disconnect();
+                JsonNode municipalityData = objectMapper.readTree(response.toString());
+
+                return municipalityData;
             }
-        } else {
-            Log.e("Error", "Invalid query type");
-            throw new IOException("Invalid query type");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    private HttpURLConnection connectToAPIAndSendPostRequest(URL url, ObjectMapper objectMapper, JsonNode jsonQuery)
-            throws IOException {
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+    private static HttpURLConnection connectToAPIAndSendPostRequest(ObjectMapper objectMapper, JsonNode jsonQuery, URL url)
+            throws MalformedURLException, IOException, ProtocolException, JsonProcessingException {
+
+        HttpURLConnection con = (HttpURLConnection)url.openConnection();
 
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json; utf-8");
         con.setRequestProperty("Accept", "application/json");
         con.setDoOutput(true);
 
-        try (OutputStream os = con.getOutputStream()) {
+        try(OutputStream os = con.getOutputStream()) {
             byte[] input = objectMapper.writeValueAsBytes(jsonQuery);
             os.write(input, 0, input.length);
         }
-        return con;
-    }
-
-    private HttpURLConnection connectToAPIAndSendGetRequest(URL url) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("Content-Type", "application/json; utf-8");
-        con.setRequestProperty("Accept", "application/json");
         return con;
     }
 }

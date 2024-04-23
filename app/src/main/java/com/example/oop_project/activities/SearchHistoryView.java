@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.oop_project.R;
 
-public class CityView extends AppCompatActivity {
+public class SearchHistoryView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

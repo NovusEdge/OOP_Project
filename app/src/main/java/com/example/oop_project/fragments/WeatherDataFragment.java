@@ -2,6 +2,7 @@ package com.example.oop_project.fragments;
 
 import static com.example.oop_project.activities.MainActivity.currentCity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class WeatherDataFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,20 +35,51 @@ public class WeatherDataFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_weather_data, container, false);
 
         TextView main           = (TextView) view.findViewById(R.id.maindescTextView);
-        TextView description    = (TextView) view.findViewById(R.id.longdescTextView);
         TextView tempRange      = (TextView) view.findViewById(R.id.tempRangeTextView);
         TextView humidity       = (TextView) view.findViewById(R.id.humidityTextView);
         TextView meanTempDaily  = (TextView) view.findViewById(R.id.meanDailyTempTextView);
         TextView uviTextView    = (TextView) view.findViewById(R.id.uviTextView);
-        TextView precpTextView  = (TextView) view.findViewById(R.id.precpTextView);
 
-        main.setText(String.format("%s: %s", currentCity, weatherData.getMain()));
-        description.setText(weatherData.getDescription());
-        tempRange.setText(String.format("Temperature range: %lf - %lf", weatherData.getTempRange()[0], weatherData.getTempRange()[1]));
-        humidity.setText(String.format("Humidity: %lf", weatherData.getHumidity()));
-        meanTempDaily.setText(String.format("Mean daily temperature: %lf", weatherData.getMeanDailyTemp()));
-        uviTextView.setText(String.format("UV Index: %lf", weatherData.getUvIndex()));
-        precpTextView.setText(String.format("Precipitation: %lf", weatherData.getPrecipitation()));
+        String weatherEmoji = "";
+
+        switch (weatherData.getMain().toLowerCase()) {
+            case "clear":
+                weatherEmoji = "☀️";
+                break;
+            case "clouds":
+                weatherEmoji = "☁️";
+                break;
+            case "rain":
+                weatherEmoji = "🌧️";
+                break;
+            case "snow":
+                weatherEmoji = "❄️";
+                break;
+            case "thunderstorm":
+                weatherEmoji = "⛈️";
+                break;
+            case "mist":
+            case "smoke":
+            case "haze":
+            case "dust":
+            case "fog":
+            case "sand":
+            case "ash":
+                weatherEmoji = "🌫️";
+                break;
+            case "squall":
+            case "tornado":
+                weatherEmoji = "🌪️";
+                break;
+        }
+
+
+        main.setText(String.format("%s: %s %s", currentCity, weatherData.getMain(), weatherEmoji));
+
+        tempRange.setText(String.format("Temperature range: %f to %f", weatherData.getTempRange()[0], weatherData.getTempRange()[1]));
+        humidity.setText(String.format("Humidity: %f", weatherData.getHumidity()));
+        meanTempDaily.setText(String.format("Mean daily temperature: %f", weatherData.getMeanDailyTemp()));
+        uviTextView.setText(String.format("UV Index: %f", weatherData.getUvIndex()));
 
         return view;
     }

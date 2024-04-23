@@ -1,5 +1,6 @@
 package com.example.oop_project.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class PopulationDataFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

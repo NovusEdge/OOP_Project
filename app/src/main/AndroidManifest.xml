@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CityView"
+            android:name=".activities.SearchHistoryView"
             android:exported="false" />
         <activity
             android:name=".activities.CityInformationActivity"

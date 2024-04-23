@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oop_project.R;
 
-public class CityViewHolder extends RecyclerView.ViewHolder {
+public class SearchHistoryViewHolder extends RecyclerView.ViewHolder {
 
     TextView cityNameTextView;
 
-    public CityViewHolder(@NonNull View itemView) {
+    public SearchHistoryViewHolder(@NonNull View itemView) {
         super(itemView);
         cityNameTextView = itemView.findViewById(R.id.cityName);
     }

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,27 +13,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oop_project.DataRetriever;
-import com.example.oop_project.MunicipalityData;
 import com.example.oop_project.R;
-import com.example.oop_project.helper_classes.CityItemListAdapter;
+import com.example.oop_project.helper_classes.SearchHistoryListAdapter;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+    public static String CITY_HISTORY_FILE = "city_history.txt";
+    public static ArrayList<String> cityList = new ArrayList<>();
 
     public static String currentCity;
-    public static MunicipalityData currentMunicipalityData;
 
     public HashMap<String, String> validCities = new HashMap<>();
 
@@ -49,10 +48,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-
         // Get UI components:
         Button searchButton = findViewById(R.id.searchButton);
         TextView citySearch = findViewById(R.id.citySearchTextView);
@@ -61,28 +56,28 @@ public class MainActivity extends AppCompatActivity {
         // Read city search history from file into an arraylist of strings.
         // Each of the names are separated by a newline character.
         Context context = getApplicationContext();
-        String cityHistory = readFromCityFile(context);
-        ArrayList<String> cityHistoryList = new ArrayList<>();
-        Collections.addAll(cityHistoryList, cityHistory.split("\n"));
-        CityItemListAdapter cityViewAdapter = new CityItemListAdapter(context, cityHistoryList);
+        cityHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        readFromCityFile(context);
+        SearchHistoryListAdapter cityViewAdapter = new SearchHistoryListAdapter(context);
         cityHistoryRecyclerView.setAdapter(cityViewAdapter);
 
-        Thread thread = new Thread(() -> {
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.execute(() -> {
             try {
                 validCities.putAll((new DataRetriever(context)).GetCityCodes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
         });
 
-        thread.start();
-
-
+        // Set the onClickListener for the search button.
         searchButton.setOnClickListener(v -> {
             String city = citySearch.getText().toString();
             if (validCities.containsKey(city)) {
-                cityHistoryList.add(city);
-                writeToCityFile(String.join("\n", cityHistoryList), context);
+                cityList.add(city);
+                writeToCityFile(context);
                 currentCity = city;
 
                 // Start the CityView activity.
@@ -98,44 +93,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void writeToCityFile(String data, Context context) {
-        // File outputFile = new File(context.getFilesDir(), "city_history.txt");
+    private void writeToCityFile(Context context) {
         try {
-            // FileOutputStream stream = new FileOutputStream(outputFile);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("city_history", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
+            ObjectOutputStream userWriter = new ObjectOutputStream(context.openFileOutput(CITY_HISTORY_FILE, Context.MODE_PRIVATE));
+            userWriter.writeObject(cityList);
+            userWriter.close();
         } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e);
+            Log.e("CityHistoryStorage", "Error writing to file", e);
         }
     }
 
-    private String readFromCityFile(Context context) {
-
-        String ret = "";
-
+    private void readFromCityFile(Context context) {
         try {
-            InputStream inputStream = context.openFileInput("city_history.txt");
-
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString;
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((receiveString = bufferedReader.readLine()) != null) {
-                    stringBuilder.append("\n").append(receiveString);
-                }
-
-                inputStream.close();
-                ret = stringBuilder.toString();
-            }
+            ObjectInputStream userReader = new ObjectInputStream(context.openFileInput(CITY_HISTORY_FILE));
+            cityList = (ArrayList<String>) userReader.readObject();
+            userReader.close();
         } catch (FileNotFoundException e) {
-            Log.e("Error", "File not found: " + e);
+            Log.e("CityHistoryStorage", "File not found", e);
         } catch (IOException e) {
-            Log.e("Error", "Can not read file: " + e);
+            Log.e("CityHistoryStorage", "Error reading from file", e);
+        } catch (ClassNotFoundException e) {
+            Log.e("CityHistoryStorage", "Class not found", e);
         }
-
-        return ret;
     }
 }

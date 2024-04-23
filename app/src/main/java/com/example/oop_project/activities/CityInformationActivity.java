@@ -1,7 +1,6 @@
 package com.example.oop_project.activities;
 
 import static com.example.oop_project.activities.MainActivity.currentCity;
-import static com.example.oop_project.activities.MainActivity.currentMunicipalityData;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.oop_project.DataRetriever;
+import com.example.oop_project.MunicipalityData;
 import com.example.oop_project.R;
 import com.example.oop_project.helper_classes.CityTabPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CityInformationActivity extends AppCompatActivity {
+    public static MunicipalityData currentMunicipalityData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,45 +43,43 @@ public class CityInformationActivity extends AppCompatActivity {
             try {
                 currentMunicipalityData = dataRetriever.GetMunicipalityData(currentCity);
                 if (currentMunicipalityData == null) {
-                    Log.e("WeatherDataFragment", "Error retrieving data");
+                    Log.e("DATA_FETCH", "Error retrieving data");
                     throw new RuntimeException("Error retrieving data");
                 }
-                Log.i("CityInformationActivity", "Data retrieved");
+                Log.i("DATA_FETCH", "Data retrieved");
             } catch (IOException e) {
-                Log.e("CityInformationActivity", "Error retrieving data", e);
+                Log.e("DATA_FETCH", "Error retrieving data", e);
                 throw new RuntimeException(e);
             }
+
+            runOnUiThread(() -> {
+                ViewPager2 cityViewPager = (ViewPager2) findViewById(R.id.viewArea);
+                TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
+                CityTabPagerAdapter adapter = new CityTabPagerAdapter(this, currentMunicipalityData.populationData, currentMunicipalityData.weatherData);
+                cityViewPager.setAdapter(adapter);
+
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        cityViewPager.setCurrentItem(tab.getPosition());
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) { }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) { }
+                });
+
+                cityViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        super.onPageSelected(position);
+                        Objects.requireNonNull(tabLayout.getTabAt(position)).select();
+                    }
+                });
+            });
         });
-
-        CityTabPagerAdapter adapter = new CityTabPagerAdapter(this, currentMunicipalityData.populationData, currentMunicipalityData.weatherData);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-
-        ViewPager2 cityViewPager = (ViewPager2) findViewById(R.id.viewArea);
-        cityViewPager.setAdapter(adapter);
-
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                cityViewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) { }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) { }
-        });
-
-        cityViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                Objects.requireNonNull(tabLayout.getTabAt(position)).select();
-            }
-        });
-
-
     }
 }

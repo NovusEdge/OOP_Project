@@ -1,20 +1,20 @@
 {
   "query": [
     {
-      "code": "Vuosi",
-      "selection": {
-        "filter": "item",
-        "values": [
-          "2022"
-        ]
-      }
-    },
-    {
       "code": "Alue",
       "selection": {
         "filter": "item",
         "values": [
           "KU020"
+        ]
+      }
+    },
+    {
+      "code": "Vuosi",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "2022"
         ]
       }
     },
