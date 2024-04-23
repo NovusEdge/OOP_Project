@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    public static String CITY_HISTORY_FILE = "city_history.txt";
+    public static String CITY_HISTORY_FILE = "city_history.data";
     public static ArrayList<String> cityList = new ArrayList<>();
 
     public static String currentCity;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeToCityFile(Context context) {
         try {
-            ObjectOutputStream userWriter = new ObjectOutputStream(context.openFileOutput(CITY_HISTORY_FILE, Context.MODE_PRIVATE));
+            ObjectOutputStream userWriter = new ObjectOutputStream(context.openFileOutput(CITY_HISTORY_FILE, Context.MODE_APPEND));
             userWriter.writeObject(cityList);
             userWriter.close();
         } catch (IOException e) {

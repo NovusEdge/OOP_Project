@@ -14,10 +14,6 @@ public class SearchHistoryViewHolder extends RecyclerView.ViewHolder {
 
     public SearchHistoryViewHolder(@NonNull View itemView) {
         super(itemView);
-        cityNameTextView = itemView.findViewById(R.id.cityName);
-    }
-
-    public void bind(String cityName) {
-        cityNameTextView.setText(cityName);
+        cityNameTextView = (TextView) itemView.findViewById(R.id.cityName);
     }
 }

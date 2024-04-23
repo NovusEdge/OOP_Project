@@ -1,6 +1,7 @@
 package com.example.oop_project.helper_classes;
 
 import static com.example.oop_project.activities.MainActivity.cityList;
+import static com.example.oop_project.activities.MainActivity.currentCity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -27,6 +28,9 @@ public class SearchHistoryListAdapter extends RecyclerView.Adapter<SearchHistory
     @Override
     public void onBindViewHolder(@NonNull SearchHistoryViewHolder holder, int position) {
         holder.cityNameTextView.setText(cityList.get(position));
+        holder.cityNameTextView.setOnClickListener(v -> {
+            currentCity = cityList.get(holder.getAdapterPosition());
+        });
     }
 
     @Override
