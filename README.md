@@ -23,4 +23,4 @@ Each of these come together to form the structure of the app. Please refer to in
 
 ## Group Members: 
 - Aliasgar Khimani - 001581023 - mohammed.aliasgar.mohammedali.khimani@student.lut.fi
-- Roope Reime - <STUDENT_NUMBER> - roope.reime@student.lut.fi
+- Roope Reime - 001146565 - roope.reime@student.lut.fi
